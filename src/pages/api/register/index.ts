@@ -1,9 +1,18 @@
 // src/pages/api/examples.ts
 import type { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "../../../server/db/client";
+import { unstable_getServerSession as getServerSession } from "next-auth";
+import { authOptions as nextAuthOptions } from "../auth/[...nextauth]";
 
 const register = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
+    const session = await getServerSession(req, res, nextAuthOptions);
+    // need to be logged in
+    if (!session) return res.status(401).json({ error: "Unauthorized" });
+    // only admins can access this endpoint
+    if (!session?.user?.role || session?.user?.role !== "admin")
+      return res.status(403).json({ error: "Forbidden" });
+
     // register is a post request only
     if (req.method === "POST") {
       const { userId, eventId } = req.body;
