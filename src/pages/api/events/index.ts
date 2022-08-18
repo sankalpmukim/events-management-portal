@@ -7,12 +7,17 @@ const events = async (req: NextApiRequest, res: NextApiResponse) => {
     if (req.method === "GET") {
       const { q } = req.query;
       if (typeof q === "string") {
-        const events = await prisma.events.findMany({
-          where: {
-            OR: [{ name: { contains: q } }, { description: { contains: q } }],
-          },
-        });
-        res.status(200).json({ data: events });
+        if (q !== "") {
+          const events = await prisma.events.findMany({
+            where: {
+              OR: [{ name: { contains: q } }, { description: { contains: q } }],
+            },
+          });
+          res.status(200).json({ data: events });
+        } else {
+          const events = await prisma.events.findMany();
+          res.status(200).json({ data: events });
+        }
       } else if (typeof q === "undefined") {
         const events = await prisma.events.findMany();
         res.status(200).json({ data: events });
