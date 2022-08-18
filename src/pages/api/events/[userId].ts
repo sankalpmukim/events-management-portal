@@ -86,6 +86,20 @@ const events = async (req: NextApiRequest, res: NextApiResponse) => {
       });
       if (s) return res.status(200).json({ data: s });
       return res.status(404).json({ error: "Registration not found" });
+    } else if (req.method === "DELETE") {
+      if (!session?.user?.role || session?.user?.role !== "admin")
+        return res.status(403).json({ error: "Forbidden" });
+      const { userId: eventId } = req.query;
+      console.log(`eventId`, eventId);
+      if (typeof eventId !== "string")
+        return res.status(400).json({ error: "Invalid query" });
+      const s = await prisma.events.delete({
+        where: {
+          id: eventId,
+        },
+      });
+      if (s) return res.status(200).json({ data: s });
+      return res.status(404).json({ error: "Registration not found" });
     } else {
       // method not allowed
       return res.status(405).json({ error: "Method not allowed" });
