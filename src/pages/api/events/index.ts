@@ -19,6 +19,9 @@ const events = async (req: NextApiRequest, res: NextApiResponse) => {
       } else {
         res.status(400).json({ error: "Invalid query" });
       }
+    } else {
+      // method not allowed
+      return res.status(405).json({ error: "Method not allowed" });
     }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {

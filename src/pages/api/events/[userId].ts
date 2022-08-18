@@ -17,6 +17,9 @@ const events = async (req: NextApiRequest, res: NextApiResponse) => {
         });
         return res.status(200).json({ data: events });
       }
+    } else {
+      // method not allowed
+      return res.status(405).json({ error: "Method not allowed" });
     }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
