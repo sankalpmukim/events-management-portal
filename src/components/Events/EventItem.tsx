@@ -20,6 +20,11 @@ const EventItem = ({ event, registered = false }: Props) => {
   const { data: session } = useSession();
   return (
     <>
+      {/* //{" "}
+      <pre>
+        // <code>{JSON.stringify(event, null, 4)}</code>
+        //{" "}
+      </pre> */}
       <li key={event.id}>
         <a href={`#`} className="block hover:bg-gray-50">
           <div className="flex items-center px-4 py-4 sm:px-6">

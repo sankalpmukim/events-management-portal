@@ -143,7 +143,6 @@ const Layout = ({
                           if (!session || (!session.user && v.requireAdmin))
                             return false;
                           if (v.requireAdmin) {
-                            console.log(session);
                             return session?.user?.role === "admin";
                           } else {
                             return true;

@@ -19,7 +19,7 @@ const events = async (req: NextApiRequest, res: NextApiResponse) => {
             event: true,
           },
         });
-        return res.status(200).json({ data: events });
+        return res.status(200).json({ data: events.map((e) => e.event) });
       }
     } else if (req.method === "POST") {
       // if (!session?.user?.role || session?.user?.role !== "admin")
