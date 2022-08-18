@@ -6,6 +6,8 @@ import {
   MailIcon,
 } from "@heroicons/react/solid";
 import { Prisma } from "@prisma/client";
+import { useSession } from "next-auth/react";
+import { useState } from "react";
 import { getDottedString } from "../../utils";
 
 interface Props {
@@ -13,6 +15,8 @@ interface Props {
 }
 
 export default function EventsList({ data }: Props) {
+  const { data: session } = useSession();
+  const [btnDisabled, setBtnDisabled] = useState(false);
   return (
     <div className="bg-white shadow overflow-hidden sm:rounded-md">
       <ul role="list" className="divide-y divide-gray-200">
@@ -69,12 +73,49 @@ export default function EventsList({ data }: Props) {
                     </div>
                   </div>
                 </div>
-                <div>
-                  <ChevronRightIcon
-                    className="h-5 w-5 text-gray-400"
-                    aria-hidden="true"
-                  />
-                </div>
+                {session ? (
+                  <button
+                    className="border rounded p-2"
+                    onClick={async () => {
+                      console.log(session.user?.id, event.id);
+                      setBtnDisabled(true);
+                      try {
+                        const res = await fetch(`/api/events/${event.id}`, {
+                          method: "POST",
+                          headers: {
+                            "Content-Type": "application/json",
+                          },
+                        });
+                        if (res.ok) {
+                          alert(`Successfully registered for ${event.name}`);
+                          setBtnDisabled(false);
+                        } else {
+                          if (res.status !== 500) {
+                            alert((await res.json()).error);
+                            setBtnDisabled(false);
+                          } else {
+                            console.error((await res.json()).error);
+                            alert("An error occurred");
+                            setBtnDisabled(false);
+                          }
+                        }
+                      } catch (error) {
+                        alert("An error occurred");
+                        console.error(error);
+                        setBtnDisabled(false);
+                      }
+                    }}
+                    title={`Register for "${event.name}"`}
+                    disabled={btnDisabled}
+                  >
+                    <ChevronRightIcon
+                      className="h-5 w-5 text-gray-400"
+                      aria-hidden="true"
+                    />
+                  </button>
+                ) : (
+                  <span>{`Login to register`}</span>
+                )}
               </div>
             </a>
           </li>

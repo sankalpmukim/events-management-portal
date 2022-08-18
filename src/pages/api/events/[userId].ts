@@ -25,7 +25,10 @@ const events = async (req: NextApiRequest, res: NextApiResponse) => {
       if (!session?.user?.role || session?.user?.role !== "admin")
         return res.status(403).json({ error: "Forbidden" });
 
-      const { userId, eventId } = req.body;
+      const { userId: eventId } = req.query;
+      const userId = session.user.id;
+      if (typeof eventId !== "string")
+        return res.status(400).json({ error: "Bad Request, event not found" });
       // check numSeatsLeft in event
       const event = await prisma.events.findFirst({
         where: {
@@ -47,8 +50,13 @@ const events = async (req: NextApiRequest, res: NextApiResponse) => {
       });
       if (!user) return res.status(404).json({ error: "User not found" });
 
-      const existingEventRegistrationCheck = user.EventRegistration.find(
-        (registration) => registration.eventId === eventId
+      const existingEventRegistrationCheck = prisma.eventRegistration.findFirst(
+        {
+          where: {
+            userId: userId,
+            eventId: eventId,
+          },
+        }
       );
       if (!existingEventRegistrationCheck)
         return res.status(400).json({ error: "User already registered" });
