@@ -56,3 +56,5 @@ Registration Number: 20BDS0128
 GitHub: <https://github.com/sankalpmukim>
 
 At some point in the near future, I'll also deploy this app (because why not!) and leave the site url here. The deployed app can then be used for demo purposes.
+In the last half an hour, in order to push features quickly and attempt minor bug fixes at the same time, I have ruined previously working code...
+The backend still works flawlessly and the frontend mostly looks good but when a user registers for an event, it is not visible on the frontend but it is visible on the backend (Used `npx prisma studio` to check)
