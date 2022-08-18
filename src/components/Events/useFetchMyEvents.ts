@@ -21,10 +21,9 @@ const useFetchMyEvents = ({ q }: Options) => {
           setStatus("loading");
           const res = await fetch(`/api/events/${session?.user?.id ?? ``}`);
           if (res.ok) {
-            const data = (await res.json()).data as {
-              event: Prisma.EventsGetPayload<true>;
-            }[];
-            setEvents(data.map((d) => d.event));
+            const data = (await res.json())
+              .data as Prisma.EventsGetPayload<true>[];
+            setEvents(data);
             setStatus("success");
             console.log(data);
           } else {
@@ -35,10 +34,9 @@ const useFetchMyEvents = ({ q }: Options) => {
           setStatus("loading");
           const res = await fetch(`/api/events?q=${q}`);
           if (res.ok) {
-            const data = (await res.json()).data as {
-              event: Prisma.EventsGetPayload<true>;
-            }[];
-            setEvents(data.map((d) => d.event));
+            const data = (await res.json())
+              .data as Prisma.EventsGetPayload<true>[];
+            setEvents(data);
             setStatus("success");
             console.log(data);
           } else {
