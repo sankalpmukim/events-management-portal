@@ -1,131 +1,58 @@
-# Create T3 App
+# MotorQ Assignment (AE Intern assignment)
 
-This is an app bootstrapped according to the [init.tips](https://init.tips) stack, also known as the T3-Stack.
+This app uses Industry standard trusted technologies:
 
-## Why are there `.js` files in here?
+- NextJs
+- TypeScript
+- Next Auth
+- Postgresql
+- Prisma
+- TailwindCSS
 
-As per [T3-Axiom #3](https://github.com/t3-oss/create-t3-app/tree/next#3-typesafety-isnt-optional), we believe take typesafety as a first class citizen. Unfortunately, not all frameworks and plugins support TypeScript which means some of the configuration files have to be `.js` files.
+## How to run locally?
 
-We try to emphasize that these files are javascript for a reason, by explicitly declaring its type (`cjs` or `mjs`) depending on what's supported by the library it is used by. Also, all the `js` files in this project are still typechecked using a `@ts-check` comment at the top.
+1. Clone the repository
+2. Run `npm i`
+3. Provision a Postgresql DB (Can use services such as <https://railway.app> to do so in seconds) or like me, just use Docker to run locally and fast!
+4. Set up Google Authentication and get client id and client secret
+5. Set up a .env that looks like this
 
-## What's next? How do I make an app with this?
+```
+# Note that not all variables here might be in use for your selected configuration
 
-We try to keep this project as simple as possible, so you can start with the most basic configuration and then move on to more advanced configuration.
+# Prisma
+DATABASE_URL=postgresql://postgres:mysecretpassword@localhost:5432/test
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
+# Next Auth
+NEXTAUTH_SECRET=abcde # make sure to not keep this empty!
+NEXTAUTH_URL=http://localhost:3000
 
-- [Next-Auth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
-- [TailwindCSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io) (using @next version? [see v10 docs here](https://alpha.trpc.io))
+# Next Auth Discord Provider
+GOOGLE_CLIENT_ID=abcde-fghij.apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=ACBKHBSDKC
+```
 
-## How do I deploy this?
+6. Run `npx prisma db push` to generate local prisma client definitions and also configure schema to the chosen db.
+7. Voila! Use the application!
+8. You can run `npx prisma studio` to perform and analyse the database
 
-### Vercel
+## Strengths
 
-We recommend deploying to [Vercel](https://vercel.com/?utm_source=t3-oss&utm_campaign=oss). It makes it super easy to deploy NextJs apps.
+- Used a good tech stack and implemented all important functionality.
+- Used great software development practices to write scalable and reliable code!
 
-- Push your code to a GitHub repository.
-- Go to [Vercel](https://vercel.com/?utm_source=t3-oss&utm_campaign=oss) and sign up with GitHub.
-- Create a Project and import the repository you pushed your code to.
-- Add your environment variables.
-- Click **Deploy**
-- Now whenever you push a change to your repository, Vercel will automatically redeploy your website!
+## Things I'd change if I had more time
 
-### Docker
+- I did the frontend later so I struggled to find the polishing time... Some more validation and relevant user inputs would be nice.. These things are easily implementable!
+- If I had a lot more time then I'd have gone with using tRPC. The supreme authority in the typescript world to write reliable backend code!
+- I chose a relational DB like postgresql because of several advantages but one of them was to use the constraints properly. I couldn't get that to work and wasted some time on that! But in the scope of a more production focused application, this crucial feature can be used in several places!
+  
+## Personal details... how to reach me?
 
-You can also dockerize this stack and deploy a container.
+Name: Sankalp Mukim
+Primary Email: sankalpmukim@gmail.com
+VIT Email: sankalp.mukim2020@vitstudent.ac.in
+Registration Number: 20BDS0128
+GitHub: <https://github.com/sankalpmukim>
 
-1. In your [next.config.mjs](./next.config.mjs), add the `output: "standalone"` option to your config.
-2. Create a `.dockerignore` file with the following contents:
-   <details>
-   <summary>.dockerignore</summary>
-
-   ```
-   Dockerfile
-   .dockerignore
-   node_modules
-   npm-debug.log
-   README.md
-   .next
-   .git
-   ```
-
-  </details>
-
-3. Create a `Dockerfile` with the following contents:
-   <details>
-   <summary>Dockerfile</summary>
-
-   ```Dockerfile
-   # Install dependencies only when needed
-   FROM node:16-alpine AS deps
-   # Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
-   RUN apk add --no-cache libc6-compat
-   WORKDIR /app
-
-   # Install dependencies based on the preferred package manager
-   COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
-   RUN \
-      if [ -f yarn.lock ]; then yarn --frozen-lockfile; \
-      elif [ -f package-lock.json ]; then npm ci; \
-      elif [ -f pnpm-lock.yaml ]; then yarn global add pnpm && pnpm i; \
-      else echo "Lockfile not found." && exit 1; \
-      fi
-
-
-   # Rebuild the source code only when needed
-   FROM node:16-alpine AS builder
-   WORKDIR /app
-   COPY --from=deps /app/node_modules ./node_modules
-   COPY . .
-
-   # Next.js collects completely anonymous telemetry data about general usage.
-   # Learn more here: https://nextjs.org/telemetry
-   # Uncomment the following line in case you want to disable telemetry during the build.
-   # ENV NEXT_TELEMETRY_DISABLED 1
-
-   RUN yarn build
-
-   # If using npm comment out above and use below instead
-   # RUN npm run build
-
-   # Production image, copy all the files and run next
-   FROM node:16-alpine AS runner
-   WORKDIR /app
-
-   ENV NODE_ENV production
-   # Uncomment the following line in case you want to disable telemetry during runtime.
-   # ENV NEXT_TELEMETRY_DISABLED 1
-
-   RUN addgroup --system --gid 1001 nodejs
-   RUN adduser --system --uid 1001 nextjs
-
-   # You only need to copy next.config.js if you are NOT using the default configuration
-   # COPY --from=builder /app/next.config.js ./
-   COPY --from=builder /app/public ./public
-   COPY --from=builder /app/package.json ./package.json
-
-   # Automatically leverage output traces to reduce image size
-   # https://nextjs.org/docs/advanced-features/output-file-tracing
-   COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-   COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
-
-   USER nextjs
-
-   EXPOSE 3000
-
-   ENV PORT 3000
-
-   CMD ["node", "server.js"]
-   ```
-
-  </details>
-
-4. You can now build an image to deploy yourself, or use a PaaS such as [Railway's](https://railway.app) automated [Dockerfile deployments](https://docs.railway.app/deploy/dockerfiles) to deploy your app.
-
-## Useful resources
-
-Here are some resources that we commonly refer to:
-
-- [Protecting routes with Next-Auth.js](https://next-auth.js.org/configuration/nextjs#unstable_getserversession)
+At some point in the near future, I'll also deploy this app (because why not!) and leave the site url here. The deployed app can then be used for demo purposes.
