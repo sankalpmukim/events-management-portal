@@ -77,7 +77,8 @@ model Events {
     image             String
     createdAt         DateTime            @default(now())
     updatedAt         DateTime            @updatedAt
-    numSeatsLeft      Int
+    totalSeats        Int
+    seatsLeft         Int
     EventRegistration EventRegistration[]
     createdBy         User                @relation(fields: [adminId], references: [id])
     adminId           String              @map("userId")
