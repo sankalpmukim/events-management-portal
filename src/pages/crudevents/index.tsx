@@ -15,7 +15,7 @@ const CrudEvents: NextPage = () => {
       <Layout
         session={session}
         pageTitle="CRUD on Events made by you"
-        currentPage="CRUD on Events"
+        currentPage="CRUD Events"
       >
         <Create />
       </Layout>

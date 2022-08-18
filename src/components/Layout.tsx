@@ -21,7 +21,7 @@ import { signOut } from "next-auth/react";
 interface Props {
   session: Session | null;
   children: ReactNode;
-  currentPage?: "Events" | "My Events" | "CRUD on Events" | "Verify Events";
+  currentPage?: "Events" | "My Events" | "CRUD Events" | "Verify Events";
   pageTitle?: ReactNode;
   enableSearch?: boolean;
   onSubmit?: (val: string) => void;
