@@ -8,7 +8,6 @@ import { Menu } from "@headlessui/react";
 import { BellIcon, MenuAlt2Icon } from "@heroicons/react/outline";
 import { CubeIcon, SearchIcon } from "@heroicons/react/solid";
 import { signOut } from "next-auth/react";
-import Image from "next/image";
 
 interface Props {
   session: Session | null;
@@ -121,19 +120,21 @@ const Layout = ({
                     </div>
                   </Transition.Child>
                   <div className="flex-shrink-0 flex items-center px-4">
-                    <Image
+                    <img
                       className="h-8 w-auto"
                       src="https://tailwindui.com/img/logos/workflow-mark.svg?color=indigo&shade=600"
                       alt="Workflow"
                       referrerPolicy="no-referrer"
-                      layout="fill"
                     />
                   </div>
                   <div className="mt-5 flex-1 h-0 overflow-y-auto">
                     <nav className="px-2 space-y-1">
                       {navigation
                         .filter((v) => {
+                          if (!session || (!session.user && v.requireAdmin))
+                            return false;
                           if (v.requireAdmin) {
+                            console.log(session);
                             return session?.user?.role === "admin";
                           } else {
                             return true;

@@ -1,10 +1,11 @@
 import { NextPage } from "next";
 import { useSession } from "next-auth/react";
 import Head from "next/head";
+import Create from "../../components/CRUDEvents/Create";
 import Layout from "../../components/Layout";
 
 const CrudEvents: NextPage = () => {
-  const { data: session } = useSession();
+  const { data: session } = useSession({ required: true });
   return (
     <>
       <Head>
@@ -16,7 +17,7 @@ const CrudEvents: NextPage = () => {
         pageTitle="CRUD on Events made by you"
         currentPage="CRUD on Events"
       >
-        <div>CrudEvents</div>
+        <Create />
       </Layout>
     </>
   );
