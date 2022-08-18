@@ -97,7 +97,11 @@ const EventItem = ({ event, registered = false }: Props) => {
                       });
                     }
                     if (res.ok) {
-                      alert(`Successfully deregistered for ${event.name}`);
+                      alert(
+                        `Successfully ${
+                          registered ? `deregistered` : `registered`
+                        } for ${event.name}`
+                      );
                       setBtnDisabled(false);
                     } else {
                       if (res.status !== 500) {
