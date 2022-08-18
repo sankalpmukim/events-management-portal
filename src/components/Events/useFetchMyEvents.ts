@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Prisma } from "@prisma/client";
+import { useSession } from "next-auth/react";
 
 interface Options {
   q?: string;
@@ -7,17 +8,18 @@ interface Options {
 
 type Status = "loading" | "success" | "error";
 
-const useFetchEvents = ({ q }: Options) => {
+const useFetchMyEvents = ({ q }: Options) => {
   const [status, setStatus] = useState<Status>("loading");
   const [events, setEvents] = useState<Prisma.EventsGetPayload<true>[]>([]);
   const [errorMsg, setErrorMsg] = useState<string>("");
+  const { data: session } = useSession();
   useEffect(() => {
     console.log("useEffect");
     const asFn = async () => {
       try {
         if (typeof q === "undefined" || q === "") {
           setStatus("loading");
-          const res = await fetch("/api/events");
+          const res = await fetch(`/api/events/${session?.user?.id ?? ``}`);
           if (res.ok) {
             const data = (await res.json())
               .data as Prisma.EventsGetPayload<true>[];
@@ -47,8 +49,8 @@ const useFetchEvents = ({ q }: Options) => {
       }
     };
     asFn();
-  }, [q]);
+  }, [q, session?.user?.id]);
   return { status, events, errorMsg };
 };
 
-export default useFetchEvents;
+export default useFetchMyEvents;

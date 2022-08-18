@@ -6,9 +6,10 @@ import EventItem from "./EventItem";
 
 interface Props {
   data: Prisma.EventsGetPayload<true>[];
+  registered?: boolean;
 }
 
-export default function EventsList({ data }: Props) {
+export default function EventsList({ data, registered = false }: Props) {
   return (
     <div className="bg-white shadow overflow-hidden sm:rounded-md">
       <ul role="list" className="divide-y divide-gray-200">
@@ -19,7 +20,7 @@ export default function EventsList({ data }: Props) {
           <span className="p-2">{`No results found...`}</span>
         )}
         {data.map((event, index) => (
-          <EventItem event={event} key={index} />
+          <EventItem registered={registered} event={event} key={index} />
         ))}
       </ul>
     </div>

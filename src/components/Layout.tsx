@@ -13,13 +13,20 @@ import Image from "next/image";
 interface Props {
   session: Session | null;
   children: ReactNode;
-  currentPage?: "Events";
+  currentPage?: "Events" | "My Events";
   pageTitle?: ReactNode;
   enableSearch?: boolean;
   onSubmit?: (val: string) => void;
 }
 
-const navigation = [{ name: "Events", href: "/", icon: HomeIcon }];
+const navigation = [
+  { name: "Events", href: "/", icon: HomeIcon },
+  {
+    name: "My Events",
+    href: "/myevents",
+    icon: HomeIcon,
+  },
+];
 const userNavigation = [
   { name: "Your Profile", href: "#" },
   { name: "Settings", href: "#" },

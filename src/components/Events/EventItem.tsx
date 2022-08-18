@@ -5,14 +5,17 @@ import {
   CheckCircleIcon,
   ChevronRightIcon,
   MailIcon,
+  XIcon,
 } from "@heroicons/react/solid";
 import { getDottedString } from "../../utils";
 import { useSession } from "next-auth/react";
+import moment from "moment";
 
 interface Props {
   event: Prisma.EventsGetPayload<true>;
+  registered: boolean;
 }
-const EventItem = ({ event }: Props) => {
+const EventItem = ({ event, registered = false }: Props) => {
   const [btnDisabled, setBtnDisabled] = useState(false);
   const { data: session } = useSession();
   return (
@@ -57,7 +60,9 @@ const EventItem = ({ event }: Props) => {
                         className="flex-shrink-0 mr-1.5 h-5 w-5 text-green-400"
                         aria-hidden="true"
                       />
-                      {`${event.seatsLeft} seat(s) left`}
+                      {registered
+                        ? `Event starts ${moment(event.start).fromNow()}`
+                        : `${event.seatsLeft} seat(s) left`}
                     </p>
                   </div>
                 </div>
@@ -70,14 +75,24 @@ const EventItem = ({ event }: Props) => {
                   console.log(session.user?.id, event.id);
                   setBtnDisabled(true);
                   try {
-                    const res = await fetch(`/api/events/${event.id}`, {
-                      method: "POST",
-                      headers: {
-                        "Content-Type": "application/json",
-                      },
-                    });
+                    let res;
+                    if (!registered) {
+                      res = await fetch(`/api/events/${event.id}`, {
+                        method: "POST",
+                        headers: {
+                          "Content-Type": "application/json",
+                        },
+                      });
+                    } else {
+                      res = await fetch(`/api/events/deregister/${event.id}`, {
+                        method: "DELETE",
+                        headers: {
+                          "Content-Type": "application/json",
+                        },
+                      });
+                    }
                     if (res.ok) {
-                      alert(`Successfully registered for ${event.name}`);
+                      alert(`Successfully deregistered for ${event.name}`);
                       setBtnDisabled(false);
                     } else {
                       if (res.status !== 500) {
@@ -98,10 +113,14 @@ const EventItem = ({ event }: Props) => {
                 title={`Register for "${event.name}"`}
                 disabled={btnDisabled}
               >
-                <ChevronRightIcon
-                  className="h-5 w-5 text-gray-400"
-                  aria-hidden="true"
-                />
+                {!registered ? (
+                  <ChevronRightIcon
+                    className="h-5 w-5 text-gray-400"
+                    aria-hidden="true"
+                  />
+                ) : (
+                  <XIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                )}
               </button>
             ) : (
               <span>{`Login to register`}</span>
