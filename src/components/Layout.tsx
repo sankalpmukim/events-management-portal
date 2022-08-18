@@ -1,12 +1,21 @@
 /* eslint-disable @next/next/no-img-element */
 import { ReactNode, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
-import { HomeIcon, XIcon } from "@heroicons/react/outline";
+import {
+  AdjustmentsIcon,
+  HomeIcon,
+  LoginIcon,
+  XIcon,
+} from "@heroicons/react/outline";
 import { Session } from "next-auth/core/types";
 import { Fragment } from "react";
 import { Menu } from "@headlessui/react";
 import { BellIcon, MenuAlt2Icon } from "@heroicons/react/outline";
-import { CubeIcon, SearchIcon } from "@heroicons/react/solid";
+import {
+  CollectionIcon,
+  PaperAirplaneIcon,
+  SearchIcon,
+} from "@heroicons/react/solid";
 import { signOut } from "next-auth/react";
 
 interface Props {
@@ -23,19 +32,19 @@ const navigation = [
   {
     name: "My Events",
     href: "/myevents",
-    icon: HomeIcon,
+    icon: CollectionIcon,
     requireAdmin: false,
   },
   {
     name: "CRUD Events",
     href: "/crudevents",
-    icon: HomeIcon,
+    icon: AdjustmentsIcon,
     requireAdmin: true,
   },
   {
     name: "Verify Events",
     href: "/verifyeventreg",
-    icon: HomeIcon,
+    icon: PaperAirplaneIcon,
     requireAdmin: true,
   },
 ];
@@ -276,7 +285,7 @@ const Layout = ({
                           alt="avatar"
                         />
                       ) : (
-                        <CubeIcon className="h-8 w-8 rounded-full" />
+                        <LoginIcon className="h-8 w-8 rounded-full" />
                       )}
                     </Menu.Button>
                   </div>
