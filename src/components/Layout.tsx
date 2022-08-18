@@ -16,7 +16,7 @@ interface Props {
   currentPage?: "Events";
   pageTitle?: ReactNode;
   enableSearch?: boolean;
-  onSubmit: (val: string) => void;
+  onSubmit?: (val: string) => void;
 }
 
 const navigation = [{ name: "Events", href: "/", icon: HomeIcon }];
@@ -201,7 +201,7 @@ const Layout = ({
                     method="GET"
                     onSubmit={(e) => {
                       e.preventDefault();
-                      onSubmit(searchText);
+                      onSubmit?.(searchText);
                     }}
                   >
                     <label htmlFor="search-field" className="sr-only">
