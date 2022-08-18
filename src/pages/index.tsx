@@ -1,29 +1,29 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { NextPage } from "next";
 import { useSession, signIn, signOut } from "next-auth/react";
+import { useState } from "react";
+import EventsList from "../components/Events/List";
+import useFetchEvents from "../components/Events/useFetchEvents";
 import Layout from "../components/Layout";
 
 export const Home: NextPage = () => {
   const { data: session } = useSession();
-
-  if (session) {
-    return (
-      <Layout pageTitle="Events" session={session}>
-        <div className="container">
-          Welcome user {session!.user!.name!}!
-          <br />
-          <button onClick={() => signOut()}>Sign out</button>
-        </div>
-      </Layout>
-    );
-  }
+  const [q, setQ] = useState<string>("");
+  const { status, events, errorMsg } = useFetchEvents({ q });
 
   return (
-    <Layout pageTitle="Events" session={session}>
-      <div className="container">
-        Click to sign into your user account <br />
-        <button onClick={() => signIn()}>Sign in</button>
-      </div>
+    <Layout
+      enableSearch
+      pageTitle="Events"
+      session={session}
+      onSubmit={(str: string) => {
+        console.log("submit called");
+        setQ(str);
+      }}
+    >
+      {status === "loading" && <div>Loading...</div>}
+      {status === "error" && <div>{errorMsg}</div>}
+      {status === "success" && <EventsList data={events} />}
     </Layout>
   );
 };

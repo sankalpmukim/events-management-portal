@@ -8,12 +8,15 @@ import { Menu } from "@headlessui/react";
 import { BellIcon, MenuAlt2Icon } from "@heroicons/react/outline";
 import { CubeIcon, SearchIcon } from "@heroicons/react/solid";
 import { signOut } from "next-auth/react";
+import Image from "next/image";
 
 interface Props {
   session: Session | null;
   children: ReactNode;
   currentPage?: "Events";
   pageTitle?: ReactNode;
+  enableSearch?: boolean;
+  onSubmit: (val: string) => void;
 }
 
 const navigation = [{ name: "Events", href: "/", icon: HomeIcon }];
@@ -36,8 +39,11 @@ const Layout = ({
   session,
   currentPage = "Events",
   pageTitle,
+  enableSearch = false,
+  onSubmit,
 }: Props) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [searchText, setSearchText] = useState("");
 
   return (
     <>
@@ -95,10 +101,12 @@ const Layout = ({
                     </div>
                   </Transition.Child>
                   <div className="flex-shrink-0 flex items-center px-4">
-                    <img
+                    <Image
                       className="h-8 w-auto"
                       src="https://tailwindui.com/img/logos/workflow-mark.svg?color=indigo&shade=600"
                       alt="Workflow"
+                      referrerPolicy="no-referrer"
+                      layout="fill"
                     />
                   </div>
                   <div className="mt-5 flex-1 h-0 overflow-y-auto">
@@ -142,6 +150,7 @@ const Layout = ({
                 className="h-8 w-auto"
                 src="https://tailwindui.com/img/logos/workflow-mark.svg?color=indigo&shade=600"
                 alt="Workflow"
+                referrerPolicy="no-referrer"
               />
             </div>
             <div className="mt-5 flex-grow flex flex-col">
@@ -185,23 +194,35 @@ const Layout = ({
             </button>
             <div className="flex-1 px-4 flex justify-between">
               <div className="flex-1 flex">
-                <form className="w-full flex md:ml-0" action="#" method="GET">
-                  <label htmlFor="search-field" className="sr-only">
-                    {`Search`}
-                  </label>
-                  <div className="relative w-full text-gray-400 focus-within:text-gray-600">
-                    <div className="absolute inset-y-0 left-0 flex items-center pointer-events-none">
-                      <SearchIcon className="h-5 w-5" aria-hidden="true" />
+                {enableSearch && (
+                  <form
+                    className="w-full flex md:ml-0"
+                    action="#"
+                    method="GET"
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      onSubmit(searchText);
+                    }}
+                  >
+                    <label htmlFor="search-field" className="sr-only">
+                      {`Search`}
+                    </label>
+                    <div className="relative w-full text-gray-400 focus-within:text-gray-600">
+                      <div className="absolute inset-y-0 left-0 flex items-center pointer-events-none">
+                        <SearchIcon className="h-5 w-5" aria-hidden="true" />
+                      </div>
+                      <input
+                        id="search-field"
+                        className="block w-full h-full pl-8 pr-3 py-2 border-transparent text-gray-900 placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-0 focus:border-transparent sm:text-sm"
+                        placeholder="Search"
+                        type="search"
+                        name="search"
+                        value={searchText}
+                        onChange={(e) => setSearchText(e.target.value)}
+                      />
                     </div>
-                    <input
-                      id="search-field"
-                      className="block w-full h-full pl-8 pr-3 py-2 border-transparent text-gray-900 placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-0 focus:border-transparent sm:text-sm"
-                      placeholder="Search"
-                      type="search"
-                      name="search"
-                    />
-                  </div>
-                </form>
+                  </form>
+                )}
               </div>
               <div className="ml-4 flex items-center md:ml-6">
                 <button
