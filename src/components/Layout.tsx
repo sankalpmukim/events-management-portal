@@ -13,23 +13,36 @@ import Image from "next/image";
 interface Props {
   session: Session | null;
   children: ReactNode;
-  currentPage?: "Events" | "My Events";
+  currentPage?: "Events" | "My Events" | "CRUD on Events" | "Verify Events";
   pageTitle?: ReactNode;
   enableSearch?: boolean;
   onSubmit?: (val: string) => void;
 }
 
 const navigation = [
-  { name: "Events", href: "/", icon: HomeIcon },
+  { name: "Events", href: "/", icon: HomeIcon, requireAdmin: false },
   {
     name: "My Events",
     href: "/myevents",
     icon: HomeIcon,
+    requireAdmin: false,
+  },
+  {
+    name: "CRUD Events",
+    href: "/crudevents",
+    icon: HomeIcon,
+    requireAdmin: true,
+  },
+  {
+    name: "Verify Events",
+    href: "/verifyeventreg",
+    icon: HomeIcon,
+    requireAdmin: true,
   },
 ];
 const userNavigation = [
-  { name: "Your Profile", href: "#" },
-  { name: "Settings", href: "#" },
+  { name: "Your Profile", href: "/myevents" },
+  { name: "Settings", href: "/myevents" },
   { name: "Sign out", fn: () => signOut() },
 ];
 const loggedOutNavigation = [
@@ -118,29 +131,37 @@ const Layout = ({
                   </div>
                   <div className="mt-5 flex-1 h-0 overflow-y-auto">
                     <nav className="px-2 space-y-1">
-                      {navigation.map((item) => (
-                        <a
-                          key={item.name}
-                          href={item.href}
-                          className={classNames(
-                            item.name === currentPage
-                              ? "bg-gray-100 text-gray-900"
-                              : "text-gray-600 hover:bg-gray-50 hover:text-gray-900",
-                            "group flex items-center px-2 py-2 text-base font-medium rounded-md"
-                          )}
-                        >
-                          <item.icon
+                      {navigation
+                        .filter((v) => {
+                          if (v.requireAdmin) {
+                            return session?.user?.role === "admin";
+                          } else {
+                            return true;
+                          }
+                        })
+                        .map((item) => (
+                          <a
+                            key={item.name}
+                            href={item.href}
                             className={classNames(
                               item.name === currentPage
-                                ? "text-gray-500"
-                                : "text-gray-400 group-hover:text-gray-500",
-                              "mr-4 flex-shrink-0 h-6 w-6"
+                                ? "bg-gray-100 text-gray-900"
+                                : "text-gray-600 hover:bg-gray-50 hover:text-gray-900",
+                              "group flex items-center px-2 py-2 text-base font-medium rounded-md"
                             )}
-                            aria-hidden="true"
-                          />
-                          {item.name}
-                        </a>
-                      ))}
+                          >
+                            <item.icon
+                              className={classNames(
+                                item.name === currentPage
+                                  ? "text-gray-500"
+                                  : "text-gray-400 group-hover:text-gray-500",
+                                "mr-4 flex-shrink-0 h-6 w-6"
+                              )}
+                              aria-hidden="true"
+                            />
+                            {item.name}
+                          </a>
+                        ))}
                     </nav>
                   </div>
                 </Dialog.Panel>
@@ -268,8 +289,33 @@ const Layout = ({
                     leaveTo="transform opacity-0 scale-95"
                   >
                     <Menu.Items className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
-                      {session
-                        ? userNavigation.map((item) => (
+                      {session ? (
+                        <>
+                          <Menu.Item>
+                            {({ active }) => (
+                              <p
+                                className={classNames(
+                                  active ? "bg-gray-100" : "",
+                                  "block px-4 py-2 text-sm text-gray-700"
+                                )}
+                              >{`Signed in as ${
+                                session?.user?.name ?? `Guest`
+                              }`}</p>
+                            )}
+                          </Menu.Item>
+                          <Menu.Item>
+                            {({ active }) => (
+                              <p
+                                className={classNames(
+                                  active ? "bg-gray-100" : "",
+                                  "block px-4 py-2 text-sm text-gray-700"
+                                )}
+                              >{`Using ${
+                                session?.user?.email ?? `guest account`
+                              }`}</p>
+                            )}
+                          </Menu.Item>
+                          {userNavigation.map((item) => (
                             <Menu.Item key={item.name}>
                               {({ active }) => (
                                 <>
@@ -299,22 +345,25 @@ const Layout = ({
                                 </>
                               )}
                             </Menu.Item>
-                          ))
-                        : loggedOutNavigation.map((item) => (
-                            <Menu.Item key={item.name}>
-                              {({ active }) => (
-                                <a
-                                  href={item.href}
-                                  className={classNames(
-                                    active ? "bg-gray-100" : "",
-                                    "block px-4 py-2 text-sm text-gray-700"
-                                  )}
-                                >
-                                  {item.name}
-                                </a>
-                              )}
-                            </Menu.Item>
                           ))}
+                        </>
+                      ) : (
+                        loggedOutNavigation.map((item) => (
+                          <Menu.Item key={item.name}>
+                            {({ active }) => (
+                              <a
+                                href={item.href}
+                                className={classNames(
+                                  active ? "bg-gray-100" : "",
+                                  "block px-4 py-2 text-sm text-gray-700"
+                                )}
+                              >
+                                {item.name}
+                              </a>
+                            )}
+                          </Menu.Item>
+                        ))
+                      )}
                     </Menu.Items>
                   </Transition>
                 </Menu>
