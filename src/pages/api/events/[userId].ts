@@ -22,11 +22,12 @@ const events = async (req: NextApiRequest, res: NextApiResponse) => {
         return res.status(200).json({ data: events });
       }
     } else if (req.method === "POST") {
-      if (!session?.user?.role || session?.user?.role !== "admin")
-        return res.status(403).json({ error: "Forbidden" });
+      // if (!session?.user?.role || session?.user?.role !== "admin")
+      //   return res.status(403).json({ error: "Forbidden" });
 
       const { userId: eventId } = req.query;
-      const userId = session.user.id;
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const userId = session!.user!.id!;
       if (typeof eventId !== "string")
         return res.status(400).json({ error: "Bad Request, event not found" });
       // check numSeatsLeft in event
