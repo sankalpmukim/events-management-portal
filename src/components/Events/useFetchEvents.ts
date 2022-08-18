@@ -9,7 +9,7 @@ type Status = "loading" | "success" | "error";
 
 const useFetchEvents = ({ q }: Options) => {
   const [status, setStatus] = useState<Status>("loading");
-  const [events, setEvents] = useState<Prisma.EventsSelect[]>([]);
+  const [events, setEvents] = useState<Prisma.EventsGetPayload<true>[]>([]);
   const [errorMsg, setErrorMsg] = useState<string>("");
   useEffect(() => {
     console.log("useEffect");
@@ -19,7 +19,8 @@ const useFetchEvents = ({ q }: Options) => {
           setStatus("loading");
           const res = await fetch("http://localhost:3000/api/events");
           if (res.ok) {
-            const data = (await res.json()) as Prisma.EventsSelect[];
+            const data = (await res.json())
+              .data as Prisma.EventsGetPayload<true>[];
             setEvents(data);
             setStatus("success");
             console.log(data);
@@ -31,7 +32,8 @@ const useFetchEvents = ({ q }: Options) => {
           setStatus("loading");
           const res = await fetch(`http://localhost:3000/api/events?q=${q}`);
           if (res.ok) {
-            const data = (await res.json()) as Prisma.EventsSelect[];
+            const data = (await res.json())
+              .data as Prisma.EventsGetPayload<true>[];
             setEvents(data);
             setStatus("success");
             console.log(data);

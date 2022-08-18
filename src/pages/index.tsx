@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { NextPage } from "next";
-import { useSession, signIn, signOut } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { useState } from "react";
 import EventsList from "../components/Events/List";
 import useFetchEvents from "../components/Events/useFetchEvents";
