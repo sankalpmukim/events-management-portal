@@ -22,8 +22,20 @@ const VerifyEventReg: NextPage = () => {
         <div>
           <TextSubmit
             label="Enter Code"
-            onSubmit={() => {
+            onSubmit={async () => {
               console.log(`submitting ${text}`);
+              const res = await fetch(`/api/verify`, {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ registrationId: text }),
+              });
+              if (res.ok) {
+                alert("Successfully verified");
+              } else {
+                alert((await res.json()).error);
+              }
             }}
             setText={setText}
             text={text}
