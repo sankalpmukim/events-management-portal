@@ -2,7 +2,7 @@
 import { NextPage } from "next";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
-import EventsList from "../components/Events/List";
+import EventsList from "../components/Events/EventsList";
 import useFetchEvents from "../components/Events/useFetchEvents";
 import Layout from "../components/Layout";
 
