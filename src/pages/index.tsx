@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { NextPage } from "next";
 import { useSession, signIn, signOut } from "next-auth/react";
 
@@ -7,7 +8,7 @@ export const Home: NextPage = () => {
   if (session) {
     return (
       <div className="container">
-        Welcome user
+        Welcome user {session!.user!.name!}!
         <br />
         <button onClick={() => signOut()}>Sign out</button>
       </div>
