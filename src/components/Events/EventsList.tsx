@@ -17,22 +17,12 @@ export default function EventsList({ data, registered = false }: Props) {
           {/* <pre>
           <code>{JSON.stringify(data, null, 4)}</code>
         </pre> */}
-          {data.filter((v) => !!v).length === 0 && (
+          {data.length === 0 && (
             <span className="p-2">{`No results found...`}</span>
           )}
-          {data
-            .filter((v) => !!v)
-            .map((event, index) => (
-              <>
-                {event !== null ? (
-                  <EventItem
-                    registered={registered}
-                    event={event}
-                    key={index}
-                  />
-                ) : null}
-              </>
-            ))}
+          {data.map((event, index) => (
+            <EventItem registered={registered} event={event} key={index} />
+          ))}
         </ul>
       </div>
     </>

@@ -93,4 +93,6 @@ model EventRegistration {
     user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
     event                Events   @relation(fields: [eventId], references: [id], onDelete: Cascade)
     registrationApproved Boolean  @default(false)
+
+    @@unique([eventId, userId])
 }
